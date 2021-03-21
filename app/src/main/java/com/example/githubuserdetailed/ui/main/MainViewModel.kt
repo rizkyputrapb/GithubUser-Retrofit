@@ -1,21 +1,22 @@
 package com.example.githubuserdetailed.ui.main
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.githubuserdetailed.api.Envelope
 import com.example.githubuserdetailed.model.User
 import com.example.githubuserdetailed.api.UserListRepository
 
-class MainViewModel : ViewModel {
+class MainViewModel : ViewModel() {
     var userListRep: UserListRepository = UserListRepository().getInstance()
-    private lateinit var userListMutableLiveData: MutableLiveData<List<User>>
+    private var userListMutableLiveData = MutableLiveData<Envelope<List<User>>>()
+    private var userListLiveData = MutableLiveData<List<User>>()
 
-    constructor(username: String?) {
-        if (username != null) {
-            this.userListMutableLiveData = UserListRepository().getUserList(username)
-        }
+    fun getUserList(username: String): MutableLiveData<Envelope<List<User>>> {
+        return UserListRepository().getUserList(username)
     }
 
-    fun getUserList(): MutableLiveData<List<User>> {
-        return userListMutableLiveData
+    fun listUserLiveData(): LiveData<List<User>> {
+        return userListLiveData
     }
 }

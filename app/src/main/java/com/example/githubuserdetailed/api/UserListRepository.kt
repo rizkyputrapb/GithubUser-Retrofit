@@ -1,5 +1,6 @@
 package com.example.githubuserdetailed.api
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.githubuserdetailed.model.User
 import retrofit2.Call
@@ -8,25 +9,26 @@ import retrofit2.Response
 
 class UserListRepository {
     var apiInterface: ApiInterface = ApiClient.createService(ApiInterface::class.java)
-    var userList: MutableLiveData<List<User>> = MutableLiveData()
+    var userList: MutableLiveData<Envelope<List<User>>> = MutableLiveData()
     lateinit var userListRepository: UserListRepository
 
     fun getInstance(): UserListRepository {
-        if (userListRepository != null) {
-            userListRepository = UserListRepository()
-        }
+        userListRepository = UserListRepository()
         return userListRepository
     }
 
-    fun getUserList(username: String): MutableLiveData<List<User>> {
+    fun getUserList(username: String): MutableLiveData<Envelope<List<User>>> {
         var userData = this.apiInterface.getSearchUsers(username)
-        userData.enqueue(object : Callback<List<User>> {
-            override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
+        userData.enqueue(object : Callback<Envelope<List<User>>> {
+            override fun onResponse(
+                call: Call<Envelope<List<User>>>,
+                response: Response<Envelope<List<User>>>
+            ) {
                 userList.value = response.body()
             }
 
-            override fun onFailure(call: Call<List<User>>, t: Throwable) {
-                TODO("Not yet implemented")
+            override fun onFailure(call: Call<Envelope<List<User>>>, t: Throwable) {
+                Log.w("API", "Failed to retrieve api: $t")
             }
 
         })

@@ -12,8 +12,8 @@ interface ApiInterface {
         @Path("username") username: String
     ): Call<User>
 
-    @GET("/search/users?}")
+    @GET("/search/users?")
     fun getSearchUsers(
         @Query("q") username: String
-    ): Call<List<User>>
+    ): Call<Envelope<List<User>>>
 }

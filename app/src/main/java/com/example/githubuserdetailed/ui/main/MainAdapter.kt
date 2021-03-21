@@ -1,9 +1,12 @@
 package com.example.githubuserdetailed.ui.main
 
+import android.util.Log
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Adapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.githubuserdetailed.api.Envelope
 import com.example.githubuserdetailed.databinding.ItemSearchBinding
 import com.example.githubuserdetailed.model.User
 
@@ -26,14 +29,22 @@ class MainAdapter : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
-        TODO("Not yet implemented")
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val binding = ItemSearchBinding.inflate(layoutInflater, parent, false)
+        return MainViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
-        TODO("Not yet implemented")
+        val user = userList?.get(position)
+        Log.d("onBindViewHolder", "username: ${user?.login}")
+        holder.bind(user)
     }
 
     override fun getItemCount(): Int {
-        TODO("Not yet implemented")
+        return if (userList != null) {
+            userList!!.size
+        } else {
+            0
+        }
     }
 }
