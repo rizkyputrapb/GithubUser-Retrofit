@@ -1,7 +1,9 @@
 package com.example.githubuserdetailed.api
 
 import android.util.Log
+import android.widget.ProgressBar
 import androidx.lifecycle.MutableLiveData
+import com.example.githubuserdetailed.MainActivity
 import com.example.githubuserdetailed.model.User
 import retrofit2.Call
 import retrofit2.Callback

@@ -22,9 +22,7 @@ class MainFragment : Fragment() {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var mainViewModelFactory: MainViewModelFactory
-    lateinit var userList: List<User>
-    lateinit var recyclerView: RecyclerView
-    lateinit var adapter: MainAdapter
+    lateinit var mainAdapter: MainAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,7 +38,6 @@ class MainFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        menu.clear()
         inflater.inflate(R.menu.option_menu, menu)
         val searchView = menu.findItem(R.id.app_bar_search).actionView as SearchView
         menu.findItem(R.id.app_bar_search).apply {
@@ -50,7 +47,11 @@ class MainFragment : Fragment() {
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                rvSetup(query)
+                viewModel.getUserList(query).observe(viewLifecycleOwner, { userList ->
+                    userList.items
+                    mainAdapter.setUserList(userList = userList.items)
+                    mainAdapter.notifyDataSetChanged()
+                })
                 return true
             }
 
@@ -62,30 +63,23 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recyclerView = binding.rvSearch
-        adapter = MainAdapter()
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.setHasFixedSize(true)
-        recyclerView.addItemDecoration(
-            DividerItemDecoration(
-                recyclerView.context,
-                DividerItemDecoration.VERTICAL
-            )
-        )
+        rvSetup()
     }
 
-    fun rvSetup(query: String) {
-        viewModel.getUserList(query).observe(viewLifecycleOwner, { userList ->
-            userList.items
-            this.userList = userList.items
-        })
-        viewModel.listUserLiveData().observe(viewLifecycleOwner, { userList ->
-            adapter.setUserList(
-                userList
+    private fun rvSetup() {
+        mainAdapter = MainAdapter()
+        with(binding.rvSearch) {
+            this.adapter = mainAdapter
+            this.layoutManager = LinearLayoutManager(context)
+            this.setHasFixedSize(true)
+            this.addItemDecoration(
+                DividerItemDecoration(
+                    this.context,
+                    DividerItemDecoration.VERTICAL
+                )
             )
-        })
-        adapter.notifyDataSetChanged()
+
+        }
     }
 
 }
