@@ -47,11 +47,30 @@ class MainFragment : Fragment() {
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                viewModel.getUserList(query).observe(viewLifecycleOwner, { userList ->
-                    userList.items
-                    mainAdapter.setUserList(userList = userList.items)
-                    mainAdapter.notifyDataSetChanged()
-                })
+                context?.let {
+                    viewModel.getUserList(query, it)?.observe(viewLifecycleOwner, { userList ->
+                        when (userList) {
+                            null -> {
+                                binding.errorMsg.text = "Error"
+                                binding.errorMsg.visibility = View.VISIBLE
+                                binding.rvSearch.visibility = View.GONE
+                            }
+                            else -> when (userList.total_count) {
+                                0.0 -> {
+                                    binding.errorMsg.text = "No user found!"
+                                    binding.errorMsg.visibility = View.VISIBLE
+                                    binding.rvSearch.visibility = View.GONE
+                                }
+                                else -> {
+                                    mainAdapter.setUserList(userList = userList.items)
+                                    binding.errorMsg.visibility = View.GONE
+                                    binding.rvSearch.visibility = View.VISIBLE
+                                }
+                            }
+                        }
+                        mainAdapter.notifyDataSetChanged()
+                    })
+                }
                 return true
             }
 

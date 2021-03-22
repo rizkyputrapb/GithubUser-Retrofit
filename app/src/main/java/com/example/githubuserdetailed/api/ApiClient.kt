@@ -1,12 +1,12 @@
 package com.example.githubuserdetailed.api
 
+import com.example.githubuserdetailed.api.Constants.BASE_URL
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiClient {
-    val BASE_URL = " https://api.github.com"
     var builder =
         Retrofit.Builder().baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create()) as Retrofit.Builder

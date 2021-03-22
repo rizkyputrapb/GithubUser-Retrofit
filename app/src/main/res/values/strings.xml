@@ -2,4 +2,6 @@
     <string name="app_name">GithubUserDetailed</string>
     <string name="setting">Setting</string>
     <string name="search">Search</string>
+    <string name="errorMsg">Error</string>
+    <string name="AUTH_TOKEN">4d706a7745ee93608a1e4ec03942aa8cd44035b7</string>
 </resources>

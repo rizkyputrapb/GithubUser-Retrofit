@@ -1,6 +1,8 @@
 package com.example.githubuserdetailed.api
 
+import android.content.Context
 import android.util.Log
+import android.view.View
 import android.widget.ProgressBar
 import androidx.lifecycle.MutableLiveData
 import com.example.githubuserdetailed.MainActivity
@@ -19,7 +21,7 @@ class UserListRepository {
         return userListRepository
     }
 
-    fun getUserList(username: String): MutableLiveData<Envelope<List<User>>> {
+    fun getUserList(username: String, context: Context): MutableLiveData<Envelope<List<User>>> {
         var userData = this.apiInterface.getSearchUsers(username)
         userData.enqueue(object : Callback<Envelope<List<User>>> {
             override fun onResponse(
@@ -31,6 +33,7 @@ class UserListRepository {
 
             override fun onFailure(call: Call<Envelope<List<User>>>, t: Throwable) {
                 Log.w("API", "Failed to retrieve api: $t")
+                userList.value = null
             }
 
         })

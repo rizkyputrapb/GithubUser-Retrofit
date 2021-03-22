@@ -1,5 +1,6 @@
 package com.example.githubuserdetailed.ui.main
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,8 +18,11 @@ class MainViewModel() : ViewModel() {
         userListMutableLiveData = MutableLiveData<Envelope<List<User>>>()
     }
 
-    fun getUserList(username: String): MutableLiveData<Envelope<List<User>>> {
-        return UserListRepository().getUserList(username)
+    fun getUserList(username: String, context: Context): MutableLiveData<Envelope<List<User>>>? {
+        return when(UserListRepository().getUserList(username, context)) {
+            null -> null
+            else -> UserListRepository().getUserList(username, context)
+        }
     }
 
     fun listUserLiveData(): LiveData<List<User>> {
