@@ -1,12 +1,19 @@
 package com.example.githubuserdetailed.model
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
 data class User(
-    val login: String,
-    val avatar_url: String,
-    val name: String,
-    val company: String,
-    val location: String,
-    val followers: Double,
-    val following: Double,
-    val public_repos: Double
-)
+    var login: String,
+    var avatar_url: String,
+    var name: String,
+    var company: String?,
+    var location: String?,
+    var email: String?,
+    var bio: String?,
+    var blog: String?,
+    var followers: Int,
+    var following: Int,
+    var public_repos: Int
+): Parcelable

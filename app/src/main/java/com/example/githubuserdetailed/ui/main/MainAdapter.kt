@@ -3,16 +3,17 @@ package com.example.githubuserdetailed.ui.main
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Adapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.githubuserdetailed.api.Envelope
 import com.example.githubuserdetailed.databinding.ItemSearchBinding
 import com.example.githubuserdetailed.model.User
+import com.example.githubuserdetailed.ui.OnItemUserListener
 
-class MainAdapter : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
+class MainAdapter(onItemUserListener: OnItemUserListener) :
+    RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
 
     private var userList: List<User>? = null
+    private var onItemUserListener: OnItemUserListener? = onItemUserListener
 
     fun setUserList(userList: List<User>) {
         this.userList = userList
@@ -21,9 +22,10 @@ class MainAdapter : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
 
     inner class MainViewHolder(private val binding: ItemSearchBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(user: User?) {
+        fun bind(user: User?, onItemUserListener: OnItemUserListener?) {
             binding.user = user
             Glide.with(itemView).load(user?.avatar_url).circleCrop().into(binding.imageView2)
+            binding.onitemclicklistener = onItemUserListener
             binding.executePendingBindings()
         }
     }
@@ -37,7 +39,7 @@ class MainAdapter : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val user = userList?.get(position)
         Log.d("onBindViewHolder", "username: ${user?.login}")
-        holder.bind(user)
+        holder.bind(user, onItemUserListener)
     }
 
     override fun getItemCount(): Int {

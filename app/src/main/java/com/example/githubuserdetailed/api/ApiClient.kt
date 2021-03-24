@@ -12,7 +12,7 @@ object ApiClient {
             .addConverterFactory(GsonConverterFactory.create()) as Retrofit.Builder
     var retrofit = builder.build() as Retrofit
     var logging =
-        HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY) as HttpLoggingInterceptor
+        HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
     var httpClient = OkHttpClient.Builder()
 
     fun <S> createService(serviceClass: Class<S>): S {

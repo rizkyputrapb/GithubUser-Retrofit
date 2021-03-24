@@ -4,14 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-<variable
-    name="user"
-    type="com.example.githubuserdetailed.model.User" />
+
+        <variable
+            name="user"
+            type="com.example.githubuserdetailed.model.User" />
+        <variable
+            name="onitemclicklistener"
+            type="com.example.githubuserdetailed.ui.OnItemUserListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:onClick="@{()->onitemclicklistener.OnUserClicked(user)}">
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"

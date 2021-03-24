@@ -4,4 +4,19 @@
     <string name="search">Search</string>
     <string name="errorMsg">Error</string>
     <string name="AUTH_TOKEN">4d706a7745ee93608a1e4ec03942aa8cd44035b7</string>
+    <string name="DetailNameLabel">Rizky Putra Pradhana</string>
+    <string name="avatarDesc">Username Avatar</string>
+    <string name="followerCount">12345678</string>
+    <string name="followerCountLabel">Followers</string>
+    <string name="followingCount">1234</string>
+    <string name="followingCountLabel">Following</string>
+    <string name="repoCountLabel">Repositories</string>
+    <string name="userLoc">Malang, East Java</string>
+    <string name="userLink">rizkyputra.com</string>
+    <string name="userEmail">rizkyputra@gmail.com</string>
+    <string name="userBio">A student by day, still a student by night</string>
+    <string name="locIconDesc">location icon</string>
+    <string name="companyName">P.T Mencari Cinta Sejati</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

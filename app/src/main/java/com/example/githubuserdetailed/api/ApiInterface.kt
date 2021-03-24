@@ -12,9 +12,22 @@ import javax.annotation.Resources
 
 interface ApiInterface {
     @GET("/users/{username}")
+    @Headers("Authorization: token $AUTH_TOKEN")
     fun getUser(
-        @Path("username") username: String
+        @Path("username") username: String?
     ): Call<User>
+
+    @GET("https://api.github.com/users/{username}/followers")
+    @Headers("Authorization: token $AUTH_TOKEN")
+    fun getFollowers(
+        @Path("username") username: String?
+    ): Call<List<User>>
+
+    @GET("https://api.github.com/users/{username}/following")
+    @Headers("Authorization: token $AUTH_TOKEN")
+    fun getFollowing(
+        @Path("username") username: String?
+    ): Call<List<User>>
 
     @GET("/search/users?")
     @Headers("Authorization: token $AUTH_TOKEN")

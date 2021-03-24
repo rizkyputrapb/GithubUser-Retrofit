@@ -13,14 +13,12 @@ class UserRepository {
 
     constructor()
 
-    fun getInstance(): UserRepository? {
-        if (userRepository != null) {
-            userRepository = UserRepository()
-        }
+    fun getInstance(): UserRepository {
+        userRepository = UserRepository()
         return userRepository
     }
 
-    fun getUser(username: String): MutableLiveData<User> {
+    fun getUser(username: String?): MutableLiveData<User> {
         var userData = this.apiInterface.getUser(username)
         userData.enqueue(object : Callback<User> {
             override fun onResponse(call: retrofit2.Call<User>, response: Response<User>) {
