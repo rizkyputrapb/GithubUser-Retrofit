@@ -1,6 +1,7 @@
 package com.example.githubuserdetailed.ui.followers
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.githubuserdetailed.R
+import com.example.githubuserdetailed.api.Status
 import com.example.githubuserdetailed.databinding.FragmentFollowersBinding
 import com.example.githubuserdetailed.databinding.ItemFollowsBinding
 
@@ -42,8 +44,7 @@ class FollowersFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_followers, container, false)
-        viewModel = ViewModelProvider(this).get(FollowersViewModel::class.java)
-        binding.viewmodel = viewModel
+        vmSetup()
         return binding.root
     }
 
@@ -59,28 +60,55 @@ class FollowersFragment : Fragment() {
             this.layoutManager = LinearLayoutManager(context)
             this.setHasFixedSize(true)
         }
-        viewModel.getUserList(username).observe(viewLifecycleOwner, { userList ->
-            when (userList) {
-                null -> {
-                    binding.followersErrorMsg.text = "Error"
-                    binding.followersErrorMsg.visibility = View.VISIBLE
-                    binding.followersErrorMsg.visibility = View.GONE
-                }
-                else -> when (userList.size) {
-                    null -> {
-                        binding.followersErrorMsg.text = "This user has no followers!"
-                        binding.followersErrorMsg.visibility = View.VISIBLE
-                        binding.followersErrorMsg.visibility = View.GONE
+        oberserverSetup(username)
+    }
+
+    private fun oberserverSetup(query: String?) {
+        viewModel.getUserList(query).observe(viewLifecycleOwner, {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        resource.data?.let { userList ->
+                            when {
+                                userList.isNotEmpty() -> {
+                                    binding.rvFollowers.visibility = View.VISIBLE
+                                    binding.progressBar4.visibility = View.GONE
+                                    followerAdapter.setUsersList(userList)
+                                    followerAdapter.notifyDataSetChanged()
+                                }
+                                else -> {
+                                    binding.rvFollowers.visibility = View.GONE
+                                    binding.progressBar4.visibility = View.GONE
+                                    binding.followersErrorMsg.visibility = View.VISIBLE
+                                    binding.followersErrorMsg.text = getString(R.string.errorNoFollowers)
+                                }
+                            }
+                            Log.d(
+                                "STATUS",
+                                "SUCCESS: data retrieved: ${userList.size}"
+                            )
+                        }
                     }
-                    else -> {
-                        followerAdapter.setUsersList(userList)
-                        binding.followersErrorMsg.visibility = View.GONE
+                    Status.LOADING -> {
                         binding.rvFollowers.visibility = View.VISIBLE
+                        binding.progressBar4.visibility = View.VISIBLE
+                        Log.d("STATUS", "LOADING....")
+                    }
+                    Status.ERROR -> {
+                        binding.rvFollowers.visibility = View.VISIBLE
+                        binding.rvFollowers.visibility = View.VISIBLE
+                        binding.followersErrorMsg.visibility = View.VISIBLE
+                        binding.followersErrorMsg.text = it.message
+                        Log.d("STATUS", "ERROR: ${it.message}")
                     }
                 }
             }
-            followerAdapter.notifyDataSetChanged()
         })
+    }
+
+    private fun vmSetup() {
+        viewModel = ViewModelProvider(this).get(FollowersViewModel::class.java)
+        binding.viewmodel = viewModel
     }
 
     companion object {

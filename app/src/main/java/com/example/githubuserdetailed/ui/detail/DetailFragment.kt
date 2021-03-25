@@ -1,6 +1,7 @@
 package com.example.githubuserdetailed.ui.detail
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,10 +13,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.githubuserdetailed.R
+import com.example.githubuserdetailed.api.Status
+import com.example.githubuserdetailed.databinding.ContentDetailedBinding
 import com.example.githubuserdetailed.databinding.DetailFragmentBinding
 import com.example.githubuserdetailed.model.User
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.content_detailed.*
+import kotlinx.android.synthetic.main.main_fragment.*
 
 class DetailFragment : Fragment() {
 
@@ -25,6 +29,7 @@ class DetailFragment : Fragment() {
     lateinit var constraintLayout: ConstraintLayout
     lateinit var viewPagerAdapter: ViewPagerAdapter
     private val titles = arrayOf("Followers", "Following")
+    lateinit var detailedContent: ContentDetailedBinding
     var user: User? = null
 
     override fun onCreateView(
@@ -32,66 +37,26 @@ class DetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.detail_fragment, container, false)
+        detailedContent = binding.detailedContent
         (activity as AppCompatActivity).setSupportActionBar(binding.detailToolbar)
         context?.getColor(R.color.design_default_color_background)?.let {
             binding.detailToolbar.setTitleTextColor(
                 it
             )
         }
-        viewModelFactory = DetailViewModelFactory()
-        viewModel = ViewModelProvider(this, viewModelFactory).get(DetailViewModel::class.java)
-        binding.viewmodel = viewModel
-        assert(arguments != null)
-        user = arguments?.let { DetailFragmentArgs.fromBundle(it).user }
-        val detailedContent = binding.detailedContent
-        viewModel.getUser(user?.login)?.observe(viewLifecycleOwner, { user ->
-            binding.user = user
-            detailedContent.user = user
-            Glide.with(requireView()).load(user.avatar_url).into(binding.detailAvatar)
-        })
-tabSetup()
+        binding.detailToolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+        binding.detailToolbar.setNavigationOnClickListener{
+            it.setOnClickListener {
+                (activity as AppCompatActivity).onBackPressed()
+            }
+        }
+        vmSetup()
+        observerSetup()
+        tabSetup()
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        constraintLayout = binding.detailedContent.detailedConstraint
-        var constraintSet = ConstraintSet()
-        if (user?.bio == null) {
-            constraintSet.clone(constraintLayout)
-            constraintSet.clear(
-                binding.detailedContent.followingLayout.id,
-                ConstraintSet.TOP
-            )
-            constraintSet.connect(
-                binding.detailedContent.followingLayout.id,
-                ConstraintSet.TOP,
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.TOP,
-                16
-            )
-            constraintSet.applyTo(constraintLayout)
-        } else if (user?.location == null) {
-            constraintSet.connect(
-                binding.detailedContent.compIcon.id,
-                ConstraintSet.START,
-                binding.detailedContent.viewDivider.id,
-                ConstraintSet.START,
-                0
-            )
-            constraintSet.connect(
-                binding.detailedContent.compIcon.id,
-                ConstraintSet.TOP,
-                binding.detailedContent.viewDivider.id,
-                ConstraintSet.BOTTOM,
-                8
-            )
-            binding.detailedContent.locIcon.visibility = View.GONE
-            binding.detailedContent.userLoc.visibility = View.GONE
-        }
-    }
-
-    fun tabSetup() {
+    private fun tabSetup() {
         val tabLayout = binding.detailedContent.tabLayout
         viewPagerAdapter = ViewPagerAdapter(this, user?.login ?: "")
         binding.detailedContent.viewPager2.adapter = viewPagerAdapter
@@ -101,4 +66,46 @@ tabSetup()
         }.attach()
     }
 
+    private fun vmSetup() {
+        viewModelFactory = DetailViewModelFactory()
+        viewModel = ViewModelProvider(this, viewModelFactory).get(DetailViewModel::class.java)
+        binding.viewmodel = viewModel
+        assert(arguments != null)
+        user = arguments?.let { DetailFragmentArgs.fromBundle(it).user }
+    }
+
+    private fun observerSetup() {
+        viewModel.getUser(user?.login).observe(viewLifecycleOwner, {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        resource.data?.let { user ->
+                            binding.user = user
+                            Glide.with(this).load(user.avatar_url).into(binding.detailAvatar)
+                            detailedContent.detailedInnerConstraint.visibility = View.VISIBLE
+                            detailedContent.progressBar3.visibility = View.GONE
+                            detailedContent.detailedErrorMsg.visibility = View.GONE
+                            Log.d(
+                                "STATUS",
+                                "SUCCESS: data retrieved: ${user.login}"
+                            )
+                        }
+                    }
+                    Status.LOADING -> {
+                        detailedContent.progressBar3.visibility = View.VISIBLE
+                        detailedContent.detailedErrorMsg.visibility = View.GONE
+                        Log.d("STATUS", "LOADING....")
+                    }
+                    Status.ERROR -> {
+                        detailedContent.detailedInnerConstraint.visibility = View.GONE
+                        detailedContent.progressBar3.visibility = View.GONE
+                        detailedContent.detailedErrorMsg.visibility = View.VISIBLE
+                        detailedContent.detailedErrorMsg.text = it.message
+                        Log.d("STATUS", "ERROR: ${it.message}")
+                    }
+                }
+            }
+        })
+
+    }
 }

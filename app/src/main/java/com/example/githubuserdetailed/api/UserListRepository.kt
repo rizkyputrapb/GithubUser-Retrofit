@@ -19,52 +19,9 @@ class UserListRepository {
         return userListRepository
     }
 
-    fun getFollowingList(username: String?): MutableLiveData<List<User>> {
-        var userData = this.apiInterface.getFollowing(username)
-        userData.enqueue(object : Callback<List<User>> {
-            override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
-                followingList.value = response.body()
-            }
+    suspend fun getFollowingList(username: String?) = apiInterface.getFollowing(username)
 
-            override fun onFailure(call: Call<List<User>>, t: Throwable) {
-                followingList.value = null
-            }
+    suspend fun getFollowerList(username: String?) = apiInterface.getFollowers(username)
 
-        })
-        return followingList
-    }
-
-    fun getFollowerList(username: String?): MutableLiveData<List<User>> {
-        var userData = this.apiInterface.getFollowers(username)
-        userData.enqueue(object : Callback<List<User>> {
-            override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
-                followerList.value = response.body()
-            }
-
-            override fun onFailure(call: Call<List<User>>, t: Throwable) {
-                followerList.value = null
-            }
-
-        })
-        return followerList
-    }
-
-    fun getUserList(username: String): MutableLiveData<Envelope<List<User>>> {
-        var userData = this.apiInterface.getSearchUsers(username)
-        userData.enqueue(object : Callback<Envelope<List<User>>> {
-            override fun onResponse(
-                call: Call<Envelope<List<User>>>,
-                response: Response<Envelope<List<User>>>
-            ) {
-                userList.value = response.body()
-            }
-
-            override fun onFailure(call: Call<Envelope<List<User>>>, t: Throwable) {
-                Log.w("API", "Failed to retrieve api: $t")
-                userList.value = null
-            }
-
-        })
-        return userList
-    }
+    suspend fun getUserList(username: String) = apiInterface.getSearchUsers(username)
 }

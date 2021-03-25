@@ -48,7 +48,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     app:layout_collapseMode="pin"
-                    app:title="@{user.name}"
+                    app:title="@{user.login}"
                     android:theme="?attr/actionBarTheme"/>
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>

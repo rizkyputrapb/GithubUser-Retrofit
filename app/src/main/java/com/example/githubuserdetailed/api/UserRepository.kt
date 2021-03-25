@@ -18,19 +18,6 @@ class UserRepository {
         return userRepository
     }
 
-    fun getUser(username: String?): MutableLiveData<User> {
-        var userData = this.apiInterface.getUser(username)
-        userData.enqueue(object : Callback<User> {
-            override fun onResponse(call: retrofit2.Call<User>, response: Response<User>) {
-                user.value = response.body()
-            }
-
-            override fun onFailure(call: retrofit2.Call<User>, t: Throwable) {
-                TODO("Not yet implemented")
-            }
-
-        })
-        return user
-    }
+    suspend fun getUser(username: String?) = apiInterface.getUser(username)
 
 }

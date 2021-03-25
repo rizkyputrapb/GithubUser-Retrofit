@@ -1,6 +1,7 @@
 package com.example.githubuserdetailed.ui.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +14,7 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.githubuserdetailed.R
+import com.example.githubuserdetailed.api.Status
 import com.example.githubuserdetailed.databinding.MainFragmentBinding
 import com.example.githubuserdetailed.model.User
 import com.example.githubuserdetailed.ui.OnItemUserListener
@@ -41,9 +43,7 @@ class MainFragment : Fragment() {
             )
         }
         setHasOptionsMenu(true)
-        mainViewModelFactory = MainViewModelFactory()
-        viewModel = ViewModelProvider(this, mainViewModelFactory).get(MainViewModel::class.java)
-        binding.viewmodel = viewModel
+        vmSetup()
         progressBar = binding.progressBar
         return binding.root
     }
@@ -59,40 +59,7 @@ class MainFragment : Fragment() {
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                progressBar.visibility = View.VISIBLE
-                context?.let {
-                    viewModel.getUserList(query)?.observe(viewLifecycleOwner, { userList ->
-                        when (userList) {
-                            null -> {
-                                binding.errorMsg.text = "Error"
-                                binding.errorMsg.visibility = View.VISIBLE
-                                binding.rvSearch.visibility = View.GONE
-                            }
-                            else -> when (userList.total_count) {
-                                0.0 -> {
-                                    binding.errorMsg.text = "No user found!"
-                                    binding.errorMsg.visibility = View.VISIBLE
-                                    binding.rvSearch.visibility = View.GONE
-                                }
-                                else -> {
-                                    mainAdapter.setUserList(userList = userList.items)
-                                    binding.errorMsg.visibility = View.GONE
-                                    binding.rvSearch.visibility = View.VISIBLE
-                                }
-                            }
-                        }
-                        mainAdapter.notifyDataSetChanged()
-                    })
-                    viewModel.navigatetoDetail().observe(viewLifecycleOwner, { user ->
-                        if (user != null) {
-                            val action: NavDirections =
-                                MainFragmentDirections.actionMainFragmentToDetailFragment(user)
-                            Navigation.findNavController(requireView()).navigate(action)
-                            viewModel.onUserMainDetailNavigated()
-                        }
-                    })
-                }
-                progressBar.visibility = View.GONE
+                observerSetup(query)
                 return true
             }
 
@@ -117,14 +84,64 @@ class MainFragment : Fragment() {
             this.adapter = mainAdapter
             this.layoutManager = LinearLayoutManager(context)
             this.setHasFixedSize(true)
-            this.addItemDecoration(
-                DividerItemDecoration(
-                    this.context,
-                    DividerItemDecoration.VERTICAL
-                )
-            )
 
         }
+    }
+
+    private fun vmSetup() {
+        mainViewModelFactory = MainViewModelFactory()
+        viewModel = ViewModelProvider(this, mainViewModelFactory).get(MainViewModel::class.java)
+        binding.viewmodel = viewModel
+    }
+
+    private fun observerSetup(query: String) {
+        viewModel.getUserList(query).observe(viewLifecycleOwner, {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        resource.data?.let { userList ->
+                            when {
+                                userList.total_count == 0 -> {
+                                    binding.rvSearch.visibility = View.VISIBLE
+                                    progressBar.visibility = View.GONE
+                                    binding.errorMsg.text = "No User Found!"
+                                }
+                                else -> {
+                                    binding.rvSearch.visibility = View.VISIBLE
+                                    progressBar.visibility = View.GONE
+                                    mainAdapter.setUserList(userList = userList.items)
+                                    mainAdapter.notifyDataSetChanged()
+                                }
+                            }
+                            Log.d(
+                                "STATUS",
+                                "SUCCESS: data retrieved: ${userList.total_count}"
+                            )
+                        }
+                    }
+                    Status.LOADING -> {
+                        progressBar.visibility = View.VISIBLE
+                        binding.rvSearch.visibility = View.VISIBLE
+                        Log.d("STATUS", "LOADING....")
+                    }
+                    Status.ERROR -> {
+                        binding.rvSearch.visibility = View.GONE
+                        progressBar.visibility = View.GONE
+                        binding.errorMsg.visibility = View.VISIBLE
+                        binding.errorMsg.text = it.message
+                        Log.d("STATUS", "ERROR: ${it.message}")
+                    }
+                }
+            }
+        })
+        viewModel.navigatetoDetail().observe(viewLifecycleOwner, { user ->
+            if (user != null) {
+                val action: NavDirections =
+                    MainFragmentDirections.actionMainFragmentToDetailFragment(user)
+                Navigation.findNavController(requireView()).navigate(action)
+                viewModel.onUserMainDetailNavigated()
+            }
+        })
     }
 
 }

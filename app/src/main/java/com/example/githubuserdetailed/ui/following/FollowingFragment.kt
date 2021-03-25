@@ -1,6 +1,7 @@
 package com.example.githubuserdetailed.ui.following
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,11 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.githubuserdetailed.R
+import com.example.githubuserdetailed.api.Status
 import com.example.githubuserdetailed.databinding.FragmentFollowingBinding
 import com.example.githubuserdetailed.ui.followers.FollowersAdapter
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 
 /**
@@ -22,7 +22,6 @@ private const val ARG_PARAM1 = "param1"
  * create an instance of this fragment.
  */
 class FollowingFragment : Fragment() {
-    // TODO: Rename and change types of parameters
     private var username: String? = null
     private lateinit var viewModel: FollowingViewModel
     private lateinit var binding: FragmentFollowingBinding
@@ -38,10 +37,10 @@ class FollowingFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_following, container, false)
-        viewModel = ViewModelProvider(this).get(FollowingViewModel::class.java)
-        binding.viewmodel = viewModel
+        followerAdapter = FollowingAdapter()
+        vmSetup()
         return binding.root
     }
 
@@ -50,34 +49,61 @@ class FollowingFragment : Fragment() {
         rvFollowingSetup(this.username)
     }
 
-    fun rvFollowingSetup(username: String?) {
-        followerAdapter = FollowingAdapter()
-        with(binding.rvFollowing){
+    private fun vmSetup() {
+        viewModel = ViewModelProvider(this).get(FollowingViewModel::class.java)
+        binding.viewmodel = viewModel
+    }
+
+    private fun rvFollowingSetup(username: String?) {
+        with(binding.rvFollowing) {
             this.adapter = followerAdapter
             this.layoutManager = LinearLayoutManager(context)
             this.setHasFixedSize(true)
         }
-        viewModel.getUserList(username).observe(viewLifecycleOwner, { userList ->
-            when (userList) {
-                null -> {
-                    binding.followingErrorMsg.text = "Error"
-                    binding.followingErrorMsg.visibility = View.VISIBLE
-                    binding.followingErrorMsg.visibility = View.GONE
-                }
-                else -> when (userList.size) {
-                    null -> {
-                        binding.followingErrorMsg.text = "This user has no followers!"
-                        binding.followingErrorMsg.visibility = View.VISIBLE
-                        binding.followingErrorMsg.visibility = View.GONE
+        oberserverSetup(username)
+    }
+
+    private fun oberserverSetup(query: String?) {
+        viewModel.getUserList(query).observe(viewLifecycleOwner, {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        resource.data?.let { userList ->
+                            when {
+                                userList.isNotEmpty() -> {
+                                    binding.rvFollowing.visibility = View.VISIBLE
+                                    binding.progressBar2.visibility = View.GONE
+                                    followerAdapter.setUsersList(userList)
+                                    followerAdapter.notifyDataSetChanged()
+                                }
+                                else -> {
+                                    binding.rvFollowing.visibility = View.GONE
+                                    binding.progressBar2.visibility = View.GONE
+                                    binding.followingErrorMsg.visibility = View.VISIBLE
+                                    binding.followingErrorMsg.text =
+                                        getString(R.string.errorNoFollowing)
+                                }
+                            }
+                            Log.d(
+                                "STATUS",
+                                "SUCCESS: data retrieved: ${userList.size}"
+                            )
+                        }
                     }
-                    else -> {
-                        followerAdapter.setUsersList(userList)
-                        binding.followingErrorMsg.visibility = View.GONE
+                    Status.LOADING -> {
                         binding.rvFollowing.visibility = View.VISIBLE
+                        binding.progressBar2.visibility = View.VISIBLE
+                        Log.d("STATUS", "LOADING....")
+                    }
+                    Status.ERROR -> {
+                        binding.rvFollowing.visibility = View.VISIBLE
+                        binding.progressBar2.visibility = View.VISIBLE
+                        binding.followingErrorMsg.visibility = View.VISIBLE
+                        binding.followingErrorMsg.text = it.message
+                        Log.d("STATUS", "ERROR: ${it.message}")
                     }
                 }
             }
-            followerAdapter.notifyDataSetChanged()
         })
     }
 

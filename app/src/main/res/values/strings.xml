@@ -19,4 +19,11 @@
     <string name="companyName">P.T Mencari Cinta Sejati</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="errorNoFollowing">This user has not followed anyone!</string>
+    <string name="errorNoFollowers">This user has no followers</string>
+    <string name="compIconDesc">Company Icon</string>
+    <string name="blogIconDesc">Blog Icon</string>
+    <string name="emailIconDesc">Email Icon</string>
+    <string name="followsIconDesc">Follows Icon</string>
+    <string name="searchIconDesc">Search Icon</string>
 </resources>
