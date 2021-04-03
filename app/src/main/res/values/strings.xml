@@ -26,4 +26,5 @@
     <string name="emailIconDesc">Email Icon</string>
     <string name="followsIconDesc">Follows Icon</string>
     <string name="searchIconDesc">Search Icon</string>
+    <string name="errorNoUserFound">No User Found!</string>
 </resources>

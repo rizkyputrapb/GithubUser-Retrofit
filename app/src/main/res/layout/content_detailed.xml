@@ -6,8 +6,8 @@
     <data>
 
         <variable
-            name="user"
-            type="com.example.githubuserdetailed.model.User" />
+            name="viewmodel"
+            type="com.example.githubuserdetailed.ui.detail.DetailViewModel" />
 
         <import type="android.view.View" />
     </data>
@@ -21,311 +21,281 @@
         tools:showIn="@layout/detail_fragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/detailed_Constraint"
+            android:id="@+id/detailed_innerConstraint"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/detailedErrorMsg"
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager2"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tabLayout" />
+
+            <LinearLayout
+                android:id="@+id/repoLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:text="@string/errorMsg"
-                android:textAlignment="center"
-                android:textSize="24sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="@+id/followingLayout"
+                app:layout_constraintEnd_toEndOf="@+id/userName"
+                app:layout_constraintStart_toStartOf="@+id/guideline2"
+                app:layout_constraintTop_toTopOf="@+id/followingLayout">
 
-            <ProgressBar
-                android:id="@+id/progressBar3"
-                style="?android:attr/progressBarStyle"
+                <TextView
+                    android:id="@+id/repoCount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/droid_sans_bold"
+                    android:text="@{Integer.toString(viewmodel.user.public_repos)}"
+                    android:textAlignment="center"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/repoLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/droid_sans"
+                    android:text="@string/repoCountLabel"
+                    android:textAlignment="center" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/followingLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintStart_toStartOf="@+id/guideline4"
+                app:layout_constraintTop_toBottomOf="@+id/userName">
+
+                <TextView
+                    android:id="@+id/followingCount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/droid_sans_bold"
+                    android:text="@{Integer.toString(viewmodel.user.following)}"
+                    android:textAlignment="center"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/followingLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/droid_sans"
+                    android:text="@string/followingCountLabel"
+                    android:textAlignment="center" />
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.2956834532" />
+
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.68" />
+
+            <LinearLayout
+                android:id="@+id/followersLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="@+id/followingLayout"
+                app:layout_constraintEnd_toStartOf="@+id/guideline4"
+                app:layout_constraintStart_toStartOf="@+id/userName"
+                app:layout_constraintTop_toTopOf="@+id/followingLayout">
+
+                <TextView
+                    android:id="@+id/followerCount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/droid_sans_bold"
+                    android:text="@{Integer.toString(viewmodel.user.followers)}"
+                    android:textAlignment="center"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/followersLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/droid_sans"
+                    android:text="@string/followerCountLabel"
+                    android:textAlignment="center" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/viewDivider"
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@color/blue_dark"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/followingLayout" />
+
+            <ImageView
+                android:id="@+id/locIcon"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:contentDescription="@string/locIconDesc"
+                android:visibility='@{viewmodel.user.location == null || viewmodel.user.location.equals("") ? View.GONE : View.VISIBLE}'
+                app:layout_constraintStart_toStartOf="@+id/viewDivider"
+                app:layout_constraintTop_toBottomOf="@+id/viewDivider"
+                app:srcCompat="@drawable/ic_pin"
+                app:tint="@color/blue_dark" />
+
+            <TextView
+                android:id="@+id/userLoc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/droid_sans"
+                android:text="@{viewmodel.user.location}"
+                android:visibility='@{viewmodel.user.location == null || viewmodel.user.location.equals("") ? View.GONE : View.VISIBLE}'
+                app:layout_constraintBottom_toBottomOf="@+id/locIcon"
+                app:layout_constraintEnd_toEndOf="@+id/viewDivider"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/locIcon"
+                app:layout_constraintTop_toTopOf="@+id/locIcon" />
+
+            <ImageView
+                android:id="@+id/compIcon"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginTop="16dp"
+                android:contentDescription="@string/compIconDesc"
+                android:visibility='@{viewmodel.user.company == null || viewmodel.user.company.equals("") ? View.GONE : View.VISIBLE}'
+                app:layout_constraintStart_toStartOf="@+id/locIcon"
+                app:layout_constraintTop_toBottomOf="@+id/locIcon"
+                app:srcCompat="@drawable/ic_business_and_trade"
+                app:tint="@color/blue_dark" />
+
+            <TextView
+                android:id="@+id/companyName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@{viewmodel.user.company}"
+                android:visibility='@{viewmodel.user.company == null || viewmodel.user.company.equals("") ? View.GONE : View.VISIBLE}'
+                app:layout_constraintBottom_toBottomOf="@+id/compIcon"
+                app:layout_constraintEnd_toEndOf="@+id/userLoc"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/compIcon"
+                app:layout_constraintTop_toTopOf="@+id/compIcon" />
+
+            <ImageView
+                android:id="@+id/linkIcon"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginTop="16dp"
+                android:contentDescription="@string/blogIconDesc"
+                android:visibility='@{viewmodel.user.blog == null || viewmodel.user.blog.equals("") ? View.GONE : View.VISIBLE}'
+                app:layout_constraintStart_toStartOf="@+id/compIcon"
+                app:layout_constraintTop_toBottomOf="@+id/compIcon"
+                app:srcCompat="@drawable/ic_link"
+                app:tint="@color/blue_dark" />
+
+            <TextView
+                android:id="@+id/userLink"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@{viewmodel.user.blog}"
+                android:visibility='@{viewmodel.user.blog == null || viewmodel.user.blog.equals("") ? View.GONE : View.VISIBLE}'
+                app:layout_constraintBottom_toBottomOf="@+id/linkIcon"
+                app:layout_constraintEnd_toEndOf="@+id/companyName"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/linkIcon"
+                app:layout_constraintTop_toTopOf="@+id/linkIcon" />
+
+            <ImageView
+                android:id="@+id/emailIcon"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginTop="16dp"
+                android:contentDescription="@string/emailIconDesc"
+                android:visibility='@{viewmodel.user.email == null || viewmodel.user.email.equals("") ? View.GONE : View.VISIBLE}'
+                app:layout_constraintStart_toStartOf="@+id/linkIcon"
+                app:layout_constraintTop_toBottomOf="@+id/linkIcon"
+                app:srcCompat="@drawable/ic_email"
+                app:tint="@color/blue_dark" />
+
+            <TextView
+                android:id="@+id/userEmail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@{viewmodel.user.email}"
+                android:visibility='@{viewmodel.user.email == null || viewmodel.user.email.equals("") ? View.GONE : View.VISIBLE}'
+                app:layout_constraintBottom_toBottomOf="@+id/emailIcon"
+                app:layout_constraintEnd_toEndOf="@+id/userLink"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/emailIcon"
+                app:layout_constraintTop_toTopOf="@+id/emailIcon" />
+
+            <TextView
+                android:id="@+id/userName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="@font/droid_sans"
+                android:text="@{viewmodel.user.name}"
+                android:textSize="24sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/detailed_innerConstraint"
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toBottomOf="@+id/userEmail"
+                app:tabIndicatorColor="@color/blue_dark"
+                app:tabSelectedTextColor="@color/blue_dark"
+                app:tabTextColor="@color/blue">
 
-                <androidx.viewpager2.widget.ViewPager2
-                    android:id="@+id/viewPager2"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tabLayout" />
-
-                <LinearLayout
-                    android:id="@+id/repoLayout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="@+id/followingLayout"
-                    app:layout_constraintEnd_toEndOf="@+id/userName"
-                    app:layout_constraintStart_toStartOf="@+id/guideline2"
-                    app:layout_constraintTop_toTopOf="@+id/followingLayout">
-
-                    <TextView
-                        android:id="@+id/repoCount"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/droid_sans_bold"
-                        android:text="@{Integer.toString(user.public_repos)}"
-                        android:textAlignment="center"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:id="@+id/repoLabel"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/droid_sans"
-                        android:text="@string/repoCountLabel"
-                        android:textAlignment="center" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/followingLayout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="8dp"
-                    android:orientation="vertical"
-                    app:layout_constraintEnd_toStartOf="@+id/guideline2"
-                    app:layout_constraintStart_toStartOf="@+id/guideline4"
-                    app:layout_constraintTop_toBottomOf="@+id/userName">
-
-                    <TextView
-                        android:id="@+id/followingCount"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/droid_sans_bold"
-                        android:text="@{Integer.toString(user.following)}"
-                        android:textAlignment="center"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:id="@+id/followingLabel"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/droid_sans"
-                        android:text="@string/followingCountLabel"
-                        android:textAlignment="center" />
-                </LinearLayout>
-
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline4"
+                <com.google.android.material.tabs.TabItem
+                    android:id="@+id/tabFollowers"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.2956834532" />
+                    android:text="@string/followerCountLabel" />
 
-
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline2"
+                <com.google.android.material.tabs.TabItem
+                    android:id="@+id/tabFollowing"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.68"/>
+                    android:text="@string/followingCountLabel" />
+            </com.google.android.material.tabs.TabLayout>
 
-                <LinearLayout
-                    android:id="@+id/followersLayout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="@+id/followingLayout"
-                    app:layout_constraintEnd_toStartOf="@+id/guideline4"
-                    app:layout_constraintStart_toStartOf="@+id/userName"
-                    app:layout_constraintTop_toTopOf="@+id/followingLayout">
-
-                    <TextView
-                        android:id="@+id/followerCount"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/droid_sans_bold"
-                        android:text="@{Integer.toString(user.followers)}"
-                        android:textAlignment="center"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:id="@+id/followersLabel"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/droid_sans"
-                        android:text="@string/followerCountLabel"
-                        android:textAlignment="center" />
-                </LinearLayout>
-
-                <View
-                    android:id="@+id/viewDivider"
-                    android:layout_width="0dp"
-                    android:layout_height="2dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="@color/blue_dark"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/followingLayout" />
-
-                <ImageView
-                    android:id="@+id/locIcon"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:contentDescription="@string/locIconDesc"
-                    android:visibility='@{user.location == null || user.location.equals("") ? View.GONE : View.VISIBLE}'
-                    app:layout_constraintStart_toStartOf="@+id/viewDivider"
-                    app:layout_constraintTop_toBottomOf="@+id/viewDivider"
-                    app:srcCompat="@drawable/ic_pin"
-                    app:tint="@color/blue_dark" />
-
-                <TextView
-                    android:id="@+id/userLoc"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:fontFamily="@font/droid_sans"
-                    android:text="@{user.location}"
-                    android:visibility='@{user.location == null || user.location.equals("") ? View.GONE : View.VISIBLE}'
-                    app:layout_constraintBottom_toBottomOf="@+id/locIcon"
-                    app:layout_constraintEnd_toEndOf="@+id/viewDivider"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toEndOf="@+id/locIcon"
-                    app:layout_constraintTop_toTopOf="@+id/locIcon" />
-
-                <ImageView
-                    android:id="@+id/compIcon"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_marginTop="16dp"
-                    android:visibility='@{user.company == null || user.company.equals("") ? View.GONE : View.VISIBLE}'
-                    app:layout_constraintStart_toStartOf="@+id/locIcon"
-                    app:layout_constraintTop_toBottomOf="@+id/locIcon"
-                    app:srcCompat="@drawable/ic_business_and_trade"
-                    app:tint="@color/blue_dark"
-                    android:contentDescription="@string/compIconDesc" />
-
-                <TextView
-                    android:id="@+id/companyName"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="@{user.company}"
-                    android:visibility='@{user.company == null || user.company.equals("") ? View.GONE : View.VISIBLE}'
-                    app:layout_constraintBottom_toBottomOf="@+id/compIcon"
-                    app:layout_constraintEnd_toEndOf="@+id/userLoc"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toEndOf="@+id/compIcon"
-                    app:layout_constraintTop_toTopOf="@+id/compIcon" />
-
-                <ImageView
-                    android:id="@+id/linkIcon"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_marginTop="16dp"
-                    android:visibility='@{user.blog == null || user.blog.equals("") ? View.GONE : View.VISIBLE}'
-                    app:layout_constraintStart_toStartOf="@+id/compIcon"
-                    app:layout_constraintTop_toBottomOf="@+id/compIcon"
-                    android:contentDescription="@string/blogIconDesc"
-                    app:srcCompat="@drawable/ic_link"
-                    app:tint="@color/blue_dark" />
-
-                <TextView
-                    android:id="@+id/userLink"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="@{user.blog}"
-                    android:visibility='@{user.blog == null || user.blog.equals("") ? View.GONE : View.VISIBLE}'
-                    app:layout_constraintBottom_toBottomOf="@+id/linkIcon"
-                    app:layout_constraintEnd_toEndOf="@+id/companyName"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toEndOf="@+id/linkIcon"
-                    app:layout_constraintTop_toTopOf="@+id/linkIcon" />
-
-                <ImageView
-                    android:id="@+id/emailIcon"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_marginTop="16dp"
-                    android:visibility='@{user.email == null || user.email.equals("") ? View.GONE : View.VISIBLE}'
-                    app:layout_constraintStart_toStartOf="@+id/linkIcon"
-                    app:layout_constraintTop_toBottomOf="@+id/linkIcon"
-                    app:srcCompat="@drawable/ic_email"
-                    android:contentDescription="@string/emailIconDesc"
-                    app:tint="@color/blue_dark" />
-
-                <TextView
-                    android:id="@+id/userEmail"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="@{user.email}"
-                    android:visibility='@{user.email == null || user.email.equals("") ? View.GONE : View.VISIBLE}'
-                    app:layout_constraintBottom_toBottomOf="@+id/emailIcon"
-                    app:layout_constraintEnd_toEndOf="@+id/userLink"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toEndOf="@+id/emailIcon"
-                    app:layout_constraintTop_toTopOf="@+id/emailIcon" />
-
-                <TextView
-                    android:id="@+id/userName"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:fontFamily="@font/droid_sans"
-                    android:text="@{user.name}"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <com.google.android.material.tabs.TabLayout
-                    android:id="@+id/tabLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/userEmail"
-                    app:tabIndicatorColor="@color/blue_dark"
-                    app:tabSelectedTextColor="@color/blue_dark"
-                    app:tabTextColor="@color/blue">
-
-                    <com.google.android.material.tabs.TabItem
-                        android:id="@+id/tabFollowers"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/followerCountLabel" />
-
-                    <com.google.android.material.tabs.TabItem
-                        android:id="@+id/tabFollowing"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/followingCountLabel" />
-                </com.google.android.material.tabs.TabLayout>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </layout>

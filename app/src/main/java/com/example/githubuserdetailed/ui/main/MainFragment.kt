@@ -100,15 +100,15 @@ class MainFragment : Fragment() {
                 when (resource.status) {
                     Status.SUCCESS -> {
                         resource.data?.let { userList ->
-                            when {
-                                userList.total_count == 0 -> {
-                                    binding.rvSearch.visibility = View.VISIBLE
+                            when (userList.total_count) {
+                                0 -> {
                                     progressBar.visibility = View.GONE
-                                    binding.errorMsg.text = "No User Found!"
+                                    binding.errorMsg.visibility = View.VISIBLE
+                                    binding.errorMsg.text = getString(R.string.errorNoUserFound)
                                 }
                                 else -> {
-                                    binding.rvSearch.visibility = View.VISIBLE
                                     progressBar.visibility = View.GONE
+                                    binding.errorMsg.visibility = View.GONE
                                     mainAdapter.setUserList(userList = userList.items)
                                     mainAdapter.notifyDataSetChanged()
                                 }
@@ -137,7 +137,7 @@ class MainFragment : Fragment() {
         viewModel.navigatetoDetail().observe(viewLifecycleOwner, { user ->
             if (user != null) {
                 val action: NavDirections =
-                    MainFragmentDirections.actionMainFragmentToDetailFragment(user)
+                    MainFragmentDirections.actionMainFragmentToDetailFragment2(user)
                 Navigation.findNavController(requireView()).navigate(action)
                 viewModel.onUserMainDetailNavigated()
             }

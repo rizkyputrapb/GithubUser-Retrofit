@@ -1,21 +1,13 @@
 package com.example.githubuserdetailed.ui.following
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
+import com.example.githubuserdetailed.api.ApiRepository
 import com.example.githubuserdetailed.api.Resource
-import com.example.githubuserdetailed.api.UserListRepository
-import com.example.githubuserdetailed.model.User
 import kotlinx.coroutines.Dispatchers
 
-class FollowingViewModel : ViewModel {
-    var userListRep: UserListRepository
-    private var userListMutableLiveData: MutableLiveData<List<User>>
-
-    constructor() {
-        userListRep = UserListRepository().getInstance()
-        userListMutableLiveData = MutableLiveData<List<User>>()
-    }
+class FollowingViewModel : ViewModel() {
+    var userListRep: ApiRepository = ApiRepository().getInstance()
 
     fun getUserList(username: String?) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))

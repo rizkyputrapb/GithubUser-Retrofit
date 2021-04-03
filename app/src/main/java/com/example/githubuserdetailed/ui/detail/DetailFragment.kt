@@ -50,6 +50,7 @@ class DetailFragment : Fragment() {
                 (activity as AppCompatActivity).onBackPressed()
             }
         }
+        binding.lifecycleOwner = this
         vmSetup()
         observerSetup()
         tabSetup()
@@ -70,7 +71,6 @@ class DetailFragment : Fragment() {
         viewModelFactory = DetailViewModelFactory()
         viewModel = ViewModelProvider(this, viewModelFactory).get(DetailViewModel::class.java)
         binding.viewmodel = viewModel
-        assert(arguments != null)
         user = arguments?.let { DetailFragmentArgs.fromBundle(it).user }
     }
 
@@ -79,28 +79,23 @@ class DetailFragment : Fragment() {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
-                        resource.data?.let { user ->
-                            binding.user = user
-                            Glide.with(this).load(user.avatar_url).into(binding.detailAvatar)
-                            detailedContent.detailedInnerConstraint.visibility = View.VISIBLE
-                            detailedContent.progressBar3.visibility = View.GONE
-                            detailedContent.detailedErrorMsg.visibility = View.GONE
+                        resource.data?.let {
+                            binding.coordinatorLayout.visibility = View.VISIBLE
+                            binding.progressBar3.visibility = View.GONE
+                            binding.detailErrorMsg.visibility = View.GONE
                             Log.d(
                                 "STATUS",
-                                "SUCCESS: data retrieved: ${user.login}"
+                                "SUCCESS: data retrieved"
                             )
                         }
                     }
                     Status.LOADING -> {
-                        detailedContent.progressBar3.visibility = View.VISIBLE
-                        detailedContent.detailedErrorMsg.visibility = View.GONE
+                        binding.detailErrorMsg.visibility = View.GONE
                         Log.d("STATUS", "LOADING....")
                     }
                     Status.ERROR -> {
-                        detailedContent.detailedInnerConstraint.visibility = View.GONE
-                        detailedContent.progressBar3.visibility = View.GONE
-                        detailedContent.detailedErrorMsg.visibility = View.VISIBLE
-                        detailedContent.detailedErrorMsg.text = it.message
+                        binding.progressBar3.visibility = View.GONE
+                        binding.detailErrorMsg.text = "Error: ${it.message}"
                         Log.d("STATUS", "ERROR: ${it.message}")
                     }
                 }
