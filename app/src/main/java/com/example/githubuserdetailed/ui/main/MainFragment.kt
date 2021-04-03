@@ -64,7 +64,8 @@ class MainFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                return false
+                observerSetup(newText)
+                return true
             }
         })
     }
@@ -127,8 +128,10 @@ class MainFragment : Fragment() {
                     Status.ERROR -> {
                         binding.rvSearch.visibility = View.GONE
                         progressBar.visibility = View.GONE
-                        binding.errorMsg.visibility = View.VISIBLE
-                        binding.errorMsg.text = it.message
+                        if (it.message?.contains("422", ignoreCase = true) == false){
+                            binding.errorMsg.visibility = View.VISIBLE
+                            binding.errorMsg.text = it.message
+                        }
                         Log.d("STATUS", "ERROR: ${it.message}")
                     }
                 }
