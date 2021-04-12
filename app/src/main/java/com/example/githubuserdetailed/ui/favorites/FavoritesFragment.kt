@@ -1,5 +1,6 @@
 package com.example.githubuserdetailed.ui.favorites
 
+import android.database.Cursor
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import androidx.navigation.findNavController
 import com.example.githubuserdetailed.R
 import com.example.githubuserdetailed.api.Status
 import com.example.githubuserdetailed.dao.DbBuilder
+import com.example.githubuserdetailed.dao.Favorites
 import com.example.githubuserdetailed.databinding.FragmentFavoritesBinding
 import com.example.githubuserdetailed.ui.AutofitGridLayoutManager
 import com.example.githubuserdetailed.ui.main.MainFragmentDirections
@@ -123,23 +125,43 @@ class FavoritesFragment : Fragment() {
         }
     }
 
+    fun cursorMapping(it: Cursor?): ArrayList<Favorites> {
+        val list = ArrayList<Favorites>()
+        while (it?.moveToNext() == true) {
+            it?.apply {
+                list.add(
+                    Favorites(
+                        getString(getColumnIndexOrThrow(Favorites.USERNAME)),
+                        getString(getColumnIndexOrThrow(Favorites.AVATAR_URL)),
+                        getString(getColumnIndexOrThrow(Favorites.NAME))
+                    )
+                )
+            }
+        }
+        it?.close()
+        return list
+    }
+
     fun observerSetup() {
-        viewModel.getFavorites().observe(viewLifecycleOwner, { it ->
+        activity?.applicationContext?.let { viewModel.setFavoriteList(it).observe(viewLifecycleOwner, {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
-                        resource.data.let { favList ->
-                            favAdapter.setFavList(favList)
-                            favAdapter.notifyDataSetChanged()
+                        resource.data.let {
+                            viewModel.getFavorites().observe(viewLifecycleOwner, { cursor ->
+                                val list = cursorMapping(cursor)
+                                favAdapter.setFavList(list)
+                                favAdapter.notifyDataSetChanged()
+                                Log.i("ContentResolver", "Data retrieved successfully")
+                            })
                         }
                     }
-
                     Status.ERROR -> {
                         Log.w("Favorite", "Error retrieving favorites: ${resource.message}")
                     }
                 }
             }
-        })
+        }) }
     }
 
     companion object {
