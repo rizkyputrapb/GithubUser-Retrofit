@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.githubuserdetailed.databinding.ItemSearchBinding
 import com.example.githubuserdetailed.model.User
-import com.example.githubuserdetailed.ui.OnItemUserListener
 
 class MainAdapter(onItemUserListener: OnItemUserListener) :
     RecyclerView.Adapter<MainAdapter.MainViewHolder>() {

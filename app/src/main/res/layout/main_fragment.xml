@@ -15,6 +15,19 @@
         android:layout_height="match_parent"
         tools:context=".ui.main.MainFragment" >
 
+        <ImageView
+            android:id="@+id/inspectocat"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:alpha="0.25"
+            android:contentDescription="@string/octocat"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.42000002"
+            app:srcCompat="@drawable/inspectocat" />
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -22,6 +35,7 @@
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -62,5 +76,20 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/search_Motto"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:alpha="0.25"
+            android:fontFamily="@font/wendy_one"
+            android:lineSpacingMultiplier="0.75"
+            android:text="@string/search_Motto"
+            android:textAlignment="center"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="@+id/inspectocat"
+            app:layout_constraintStart_toStartOf="@+id/inspectocat"
+            app:layout_constraintTop_toBottomOf="@+id/inspectocat" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

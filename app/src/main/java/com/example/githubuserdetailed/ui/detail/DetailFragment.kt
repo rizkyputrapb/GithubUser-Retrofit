@@ -1,25 +1,25 @@
 package com.example.githubuserdetailed.ui.detail
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import android.widget.Toast.makeText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.bumptech.glide.Glide
 import com.example.githubuserdetailed.R
 import com.example.githubuserdetailed.api.Status
+import com.example.githubuserdetailed.dao.DbBuilder
 import com.example.githubuserdetailed.databinding.ContentDetailedBinding
 import com.example.githubuserdetailed.databinding.DetailFragmentBinding
 import com.example.githubuserdetailed.model.User
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.android.synthetic.main.content_detailed.*
-import kotlinx.android.synthetic.main.main_fragment.*
 
 class DetailFragment : Fragment() {
 
@@ -45,7 +45,7 @@ class DetailFragment : Fragment() {
             )
         }
         binding.detailToolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
-        binding.detailToolbar.setNavigationOnClickListener{
+        binding.detailToolbar.setNavigationOnClickListener {
             it.setOnClickListener {
                 (activity as AppCompatActivity).onBackPressed()
             }
@@ -54,7 +54,56 @@ class DetailFragment : Fragment() {
         vmSetup()
         observerSetup()
         tabSetup()
+        fabSetup()
         return binding.root
+    }
+
+    @SuppressLint("ShowToast")
+    private fun fabSetup() {
+        activity?.applicationContext?.let { DbBuilder.getInstance(it) }?.let {
+            viewModel.setDbHelper(
+                it
+            )
+        }
+        binding.fabFavorite.setOnClickListener {
+            viewModel.user.observe(viewLifecycleOwner, { user ->
+                viewModel.addToFav(user.login, user.avatar_url, user.name)
+                    .observe(viewLifecycleOwner, {
+                        it?.let { resource ->
+                            when (resource.status) {
+                                Status.SUCCESS -> {
+                                    makeText(activity?.applicationContext, "Added to Favorites", Toast.LENGTH_LONG).show()
+                                }
+                                Status.ERROR -> {
+                                    makeText(
+                                        activity?.applicationContext,
+                                        "Error adding to Favorites: ${it.message}",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
+                        }
+                    })
+            })
+            viewModel.favoritesLiveData.observe(viewLifecycleOwner, {
+                activity?.applicationContext?.let { it1 ->
+                    viewModel.contentResolver(it.uid, it.username, it.avatar_url, it.name,
+                        it1
+                    ).observe(viewLifecycleOwner, {
+                        it?.let { resource ->
+                            when (resource.status) {
+                                Status.SUCCESS -> {
+                                    Log.w("ContentResolver", "Added to ContentResolver")
+                                }
+                                Status.ERROR -> {
+                                    Log.e("ContentResolver", "Error adding to ContentResolver: ${it.message}")
+                                }
+                            }
+                        }
+                    })
+                }
+            })
+        }
     }
 
     private fun tabSetup() {
@@ -75,11 +124,12 @@ class DetailFragment : Fragment() {
     }
 
     private fun observerSetup() {
-        viewModel.getUser(user?.login).observe(viewLifecycleOwner, {
+        viewModel.getUser(user?.login).observe(viewLifecycleOwner, { it ->
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
-                        resource.data?.let {
+                        resource.data?.let { data ->
+                            this.user = data
                             binding.coordinatorLayout.visibility = View.VISIBLE
                             binding.progressBar3.visibility = View.GONE
                             binding.detailErrorMsg.visibility = View.GONE

@@ -11,20 +11,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavDirections
 import androidx.navigation.Navigation
-import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.githubuserdetailed.R
 import com.example.githubuserdetailed.api.Status
 import com.example.githubuserdetailed.databinding.MainFragmentBinding
 import com.example.githubuserdetailed.model.User
-import com.example.githubuserdetailed.ui.OnItemUserListener
 
 class MainFragment : Fragment() {
     lateinit var binding: MainFragmentBinding
-
-    companion object {
-        fun newInstance() = MainFragment()
-    }
 
     private lateinit var viewModel: MainViewModel
     private lateinit var mainViewModelFactory: MainViewModelFactory
@@ -48,6 +43,24 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.app_bar_settings -> {
+                val action = MainFragmentDirections
+                    .actionMainFragmentToSettingsFragment()
+                view?.findNavController()?.navigate(action)
+                true
+            }
+            R.id.app_bar_favorites -> {
+                val action = MainFragmentDirections
+                    .actionMainFragmentToFavoritesFragment()
+                view?.findNavController()?.navigate(action)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.option_menu, menu)
@@ -64,8 +77,7 @@ class MainFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                observerSetup(newText)
-                return true
+                return false
             }
         })
     }
@@ -103,15 +115,19 @@ class MainFragment : Fragment() {
                         resource.data?.let { userList ->
                             when (userList.total_count) {
                                 0 -> {
+                                    binding.rvSearch.visibility = View.GONE
                                     progressBar.visibility = View.GONE
                                     binding.errorMsg.visibility = View.VISIBLE
                                     binding.errorMsg.text = getString(R.string.errorNoUserFound)
                                 }
                                 else -> {
+                                    binding.rvSearch.visibility = View.VISIBLE
                                     progressBar.visibility = View.GONE
                                     binding.errorMsg.visibility = View.GONE
                                     mainAdapter.setUserList(userList = userList.items)
                                     mainAdapter.notifyDataSetChanged()
+                                    binding.inspectocat.visibility = View.GONE
+                                    binding.searchMotto.visibility = View.GONE
                                 }
                             }
                             Log.d(
@@ -122,16 +138,16 @@ class MainFragment : Fragment() {
                     }
                     Status.LOADING -> {
                         progressBar.visibility = View.VISIBLE
-                        binding.rvSearch.visibility = View.VISIBLE
+                        binding.rvSearch.visibility = View.GONE
+                        binding.inspectocat.visibility = View.GONE
+                        binding.searchMotto.visibility = View.GONE
                         Log.d("STATUS", "LOADING....")
                     }
                     Status.ERROR -> {
-                        binding.rvSearch.visibility = View.GONE
-                        progressBar.visibility = View.GONE
-                        if (it.message?.contains("422", ignoreCase = true) == false){
-                            binding.errorMsg.visibility = View.VISIBLE
-                            binding.errorMsg.text = it.message
-                        }
+                        binding.errorMsg.visibility = View.VISIBLE
+                        binding.errorMsg.text = it.message
+                        binding.inspectocat.visibility = View.GONE
+                        binding.searchMotto.visibility = View.GONE
                         Log.d("STATUS", "ERROR: ${it.message}")
                     }
                 }

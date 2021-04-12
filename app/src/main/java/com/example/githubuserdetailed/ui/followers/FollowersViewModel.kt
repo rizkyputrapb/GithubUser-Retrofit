@@ -2,12 +2,12 @@ package com.example.githubuserdetailed.ui.followers
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
-import com.example.githubuserdetailed.api.ApiRepository
+import com.example.githubuserdetailed.api.Repository
 import com.example.githubuserdetailed.api.Resource
 import kotlinx.coroutines.Dispatchers
 
 class FollowersViewModel : ViewModel() {
-    var followerListRep: ApiRepository = ApiRepository().getInstance()
+    var followerListRep: Repository = Repository().getInstance()
     fun getUserList(username: String?) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {

@@ -12,4 +12,7 @@
     <color name="blue_light">#9AE4F1</color>
     <color name="neon_light">#E5FF9A</color>
     <color name="neon">#9DD127</color>
+    <color name="turq_500">#35c2c8</color>
+    <color name="turq_700">#2e9c9e</color>
+    <color name="turq_200">#8be1e0</color>
 </resources>

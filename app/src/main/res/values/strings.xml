@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GithubUserDetailed</string>
+    <string name="app_name">GitDevs</string>
     <string name="setting">Setting</string>
     <string name="search">Search</string>
     <string name="errorMsg">Error</string>
@@ -17,7 +17,6 @@
     <string name="userBio">A student by day, still a student by night</string>
     <string name="locIconDesc">location icon</string>
     <string name="companyName">P.T Mencari Cinta Sejati</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="errorNoFollowing">This user has not followed anyone!</string>
     <string name="errorNoFollowers">This user has no followers</string>
@@ -27,4 +26,14 @@
     <string name="followsIconDesc">Follows Icon</string>
     <string name="searchIconDesc">Search Icon</string>
     <string name="errorNoUserFound">No User Found!</string>
+    <string name="settings">Settings</string>
+    <string name="delete">Delete</string>
+    <string name="set">Set</string>
+    <string name="timeLabel">Reminder Time</string>
+    <string name="search_Motto">Search for other developers like you!</string>
+    <string name="octocat">octocat</string>
+    <string name="favorites">Favorites</string>
+    <string name="mockupName">Rizky Putra Pradhana Budiman</string>
+    <string name="deleteFav">Delete from favorites</string>
+    <string name="mockupUsername">rizkyputrapb</string>
 </resources>

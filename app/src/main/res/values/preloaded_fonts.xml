@@ -2,6 +2,9 @@
 <resources>
     <array name="preloaded_fonts" translatable="false">
         <item>@font/baloo</item>
+        <item>@font/coiny</item>
         <item>@font/droid_sans_bold</item>
+        <item>@font/permanent_marker</item>
+        <item>@font/wendy_one</item>
     </array>
 </resources>

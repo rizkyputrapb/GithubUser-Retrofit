@@ -10,7 +10,7 @@
             type="com.example.githubuserdetailed.model.User" />
         <variable
             name="onitemclicklistener"
-            type="com.example.githubuserdetailed.ui.OnItemUserListener" />
+            type="com.example.githubuserdetailed.ui.main.OnItemUserListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

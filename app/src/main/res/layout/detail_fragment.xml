@@ -50,6 +50,7 @@
             tools:context=".MainActivity">
 
             <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/app_bar"
                 android:layout_width="match_parent"
                 android:layout_height="350dp"
                 android:fitsSystemWindows="true"
@@ -59,7 +60,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="350dp"
                     android:fitsSystemWindows="true"
-                    app:contentScrim="?attr/colorPrimaryVariant"
+                    app:contentScrim="@color/cardview_shadow_start_color"
                     app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
                     <ImageView
@@ -82,6 +83,15 @@
 
                 </com.google.android.material.appbar.CollapsingToolbarLayout>
             </com.google.android.material.appbar.AppBarLayout>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabFavorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/fab_margin"
+                android:src="@drawable/ic_baseline_favorite_24"
+                app:layout_anchor="@id/app_bar"
+                app:layout_anchorGravity="bottom|end" />
 
             <include
                 android:id="@+id/detailed_content"

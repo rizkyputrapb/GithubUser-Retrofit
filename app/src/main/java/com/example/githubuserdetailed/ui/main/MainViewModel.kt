@@ -4,13 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
-import com.example.githubuserdetailed.api.ApiRepository
+import com.example.githubuserdetailed.api.Repository
 import com.example.githubuserdetailed.api.Resource
 import com.example.githubuserdetailed.model.User
 import kotlinx.coroutines.Dispatchers
 
 class MainViewModel : ViewModel() {
-    var userListRep: ApiRepository = ApiRepository().getInstance()
+    var userListRep: Repository = Repository().getInstance()
     private val _navigatetoDetail = MutableLiveData<User?>()
 
     fun getUserList(username: String) = liveData(Dispatchers.IO) {

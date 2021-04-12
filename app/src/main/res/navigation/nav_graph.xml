@@ -13,13 +13,34 @@
         <action
             android:id="@+id/action_mainFragment_to_detailFragment2"
             app:destination="@id/detailFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_favoritesFragment"
+            app:destination="@id/favoritesFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailFragment"
         android:name="com.example.githubuserdetailed.ui.detail.DetailFragment"
-        android:label="DetailFragment" >
+        android:label="DetailFragment"
+        tools:layout="@layout/detail_fragment">
         <argument
             android:name="user"
             app:argType="com.example.githubuserdetailed.model.User" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.githubuserdetailed.ui.settings.SettingsFragment"
+        android:label="SettingsFragment"
+        tools:layout="@layout/fragment_settings"/>
+    <fragment
+        android:id="@+id/favoritesFragment"
+        android:name="com.example.githubuserdetailed.ui.favorites.FavoritesFragment"
+        android:label="fragment_favorites"
+        tools:layout="@layout/fragment_favorites" >
+        <action
+            android:id="@+id/action_favoritesFragment_self"
+            app:destination="@id/favoritesFragment" />
     </fragment>
 </navigation>

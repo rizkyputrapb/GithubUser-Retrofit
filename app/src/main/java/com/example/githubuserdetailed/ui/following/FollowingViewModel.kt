@@ -2,12 +2,12 @@ package com.example.githubuserdetailed.ui.following
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
-import com.example.githubuserdetailed.api.ApiRepository
+import com.example.githubuserdetailed.api.Repository
 import com.example.githubuserdetailed.api.Resource
 import kotlinx.coroutines.Dispatchers
 
 class FollowingViewModel : ViewModel() {
-    var userListRep: ApiRepository = ApiRepository().getInstance()
+    var userListRep: Repository = Repository().getInstance()
 
     fun getUserList(username: String?) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))

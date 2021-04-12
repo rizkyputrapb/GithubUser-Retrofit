@@ -3,14 +3,14 @@ package com.example.githubuserdetailed.api
 import androidx.lifecycle.MutableLiveData
 import com.example.githubuserdetailed.model.User
 
-class ApiRepository {
+class Repository {
     var apiInterface: ApiInterface = ApiClient.createService(ApiInterface::class.java)
     var user: MutableLiveData<User> = MutableLiveData()
-    lateinit var apiRepository: ApiRepository
+    lateinit var repository: Repository
 
-    fun getInstance(): ApiRepository {
-        apiRepository = ApiRepository()
-        return apiRepository
+    fun getInstance(): Repository {
+        repository = Repository()
+        return repository
     }
 
     suspend fun getUser(username: String?) = apiInterface.getUser(username)

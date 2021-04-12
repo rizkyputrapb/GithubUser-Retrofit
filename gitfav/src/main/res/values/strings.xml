@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">GitFav</string>
+    <string name="deletefav">DELEte from favorites</string>
+</resources>
