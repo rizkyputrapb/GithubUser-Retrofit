@@ -11,13 +11,11 @@ import kotlinx.coroutines.Dispatchers
 import java.lang.Exception
 
 class ConsumerFavViewModel : ViewModel() {
-    private val list = MutableLiveData<Cursor?>()
 
     fun setFavList(context: Context) = liveData(Dispatchers.Main) {
         try {
             var res = context.contentResolver.query(FavConsumer.CONTENT_URI, null, null, null, null)
             emit(Resource.success(res))
-            list.postValue(res)
             Log.i("ContentResolver", "ContentResolver get data: $res")
         } catch (e: Exception) {
             emit(
@@ -29,6 +27,4 @@ class ConsumerFavViewModel : ViewModel() {
             Log.e("ContentResolver", "error getting data $e")
         }
     }
-
-    fun getFavList(): LiveData<Cursor?> = list
 }

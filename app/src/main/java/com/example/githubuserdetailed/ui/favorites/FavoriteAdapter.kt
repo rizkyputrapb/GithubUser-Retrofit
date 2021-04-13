@@ -8,21 +8,24 @@ import com.example.githubuserdetailed.dao.Favorites
 import com.example.githubuserdetailed.databinding.FragmentSettingsBinding
 import com.example.githubuserdetailed.databinding.ItemFavoritesBinding
 import com.example.githubuserdetailed.databinding.ItemSearchBinding
+import com.example.githubuserdetailed.model.User
 
-class FavoriteAdapter(onItemFavoriteListener: OnItemFavoriteListener) : RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>() {
-    private var favoriteList: List<Favorites>? = null
+class FavoriteAdapter(onItemFavoriteListener: OnItemFavoriteListener) :
+    RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>() {
+    private var favoriteList: List<User>? = null
     private var onItemFavoriteListener: OnItemFavoriteListener? = onItemFavoriteListener
 
-    fun setFavList(favoritesList: List<Favorites>?) {
+    fun setFavList(favoritesList: List<User>?) {
         this.favoriteList = favoritesList
         notifyDataSetChanged()
     }
 
     class FavoriteViewHolder(private val binding: ItemFavoritesBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(favorites: Favorites?, onItemFavoriteListener: OnItemFavoriteListener?) {
-            binding.favorites = favorites
-            Glide.with(itemView).load(favorites?.avatar_url).circleCrop().into(binding.userAvatarFav)
+        fun bind(user: User?, onItemFavoriteListener: OnItemFavoriteListener?) {
+            binding.favorites = user
+            Glide.with(itemView).load(user?.avatar_url).circleCrop()
+                .into(binding.userAvatarFav)
             binding.onclick = onItemFavoriteListener
             binding.executePendingBindings()
         }

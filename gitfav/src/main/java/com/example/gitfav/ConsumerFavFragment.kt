@@ -76,12 +76,10 @@ class ConsumerFavFragment : Fragment() {
                 when (resource.status) {
                     Status.SUCCESS -> {
                         resource.data.let {
-                            viewModel.getFavList().observe(viewLifecycleOwner, { cursor ->
-                                val list = cursorMapping(cursor)
-                                consumerAdapter.setConsumerList(list)
-                                consumerAdapter.notifyDataSetChanged()
-                                Log.i("ContentResolver", "Data retrieved successfully")
-                            })
+                            val list = cursorMapping(it)
+                            consumerAdapter.setConsumerList(list)
+                            consumerAdapter.notifyDataSetChanged()
+                            Log.w("Favorite", "Cursor retrieved: ${cursorMapping(it).size}")
                         }
                     }
                     Status.ERROR -> {

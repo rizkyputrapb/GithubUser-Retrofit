@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
+import android.util.Log
 import com.example.githubuserdetailed.dao.DBHelperImpl
 import com.example.githubuserdetailed.dao.DbBuilder
 import com.example.githubuserdetailed.dao.Favorites
@@ -19,6 +20,7 @@ class FavoriteProvider : ContentProvider() {
 
         init {
             URI_MATCHER.addURI(Favorites.AUTHORITY, Favorites.TABLE_NAME, CONSUMER)
+            Log.d("URI", "URI matching: ${URI_MATCHER}")
         }
     }
 
@@ -35,8 +37,14 @@ class FavoriteProvider : ContentProvider() {
         p4: String?
     ): Cursor? {
         return when (URI_MATCHER.match(uri)) {
-            CONSUMER -> dbHelper.getAllCursor()
-            else -> null
+            CONSUMER -> {
+                Log.d("URI", "Query called ${URI_MATCHER.match(uri)}")
+                dbHelper.getAllCursor()
+            }
+            else -> {
+                Log.d("URI", "Query called ${URI_MATCHER.match(uri)}")
+                null
+            }
         }
     }
 
@@ -49,6 +57,7 @@ class FavoriteProvider : ContentProvider() {
     }
 
     override fun delete(p0: Uri, p1: String?, p2: Array<out String>?): Int {
+
         return 0
     }
 

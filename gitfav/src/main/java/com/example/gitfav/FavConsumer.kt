@@ -10,7 +10,7 @@ data class FavConsumer(var username: String, var avatar_url: String, var name: S
         const val NAME = "name"
 
         const val AUTHORITY = "com.example.githubuserdetailed"
-        private const val SCHEME = "provider"
+        private const val SCHEME = "content"
         const val TABLE_NAME = "favorites"
         val CONTENT_URI: Uri = Uri.Builder().apply {
             scheme(SCHEME)

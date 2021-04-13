@@ -7,4 +7,12 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="blue_dark">#305F95</color>
+    <color name="blue">#8BB8E1</color>
+    <color name="blue_light">#9AE4F1</color>
+    <color name="neon_light">#E5FF9A</color>
+    <color name="neon">#9DD127</color>
+    <color name="turq_500">#35c2c8</color>
+    <color name="turq_700">#2e9c9e</color>
+    <color name="turq_200">#8be1e0</color>
 </resources>

@@ -12,12 +12,15 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavDirections
+import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import com.example.githubuserdetailed.R
 import com.example.githubuserdetailed.api.Status
 import com.example.githubuserdetailed.dao.DbBuilder
 import com.example.githubuserdetailed.dao.Favorites
 import com.example.githubuserdetailed.databinding.FragmentFavoritesBinding
+import com.example.githubuserdetailed.model.User
 import com.example.githubuserdetailed.ui.AutofitGridLayoutManager
 import com.example.githubuserdetailed.ui.main.MainFragmentDirections
 
@@ -100,7 +103,8 @@ class FavoritesFragment : Fragment() {
                                         "$username successfully deleted from favorites",
                                         Toast.LENGTH_SHORT
                                     ).show()
-                                    val action = FavoritesFragmentDirections.actionFavoritesFragmentSelf()
+                                    val action =
+                                        FavoritesFragmentDirections.actionFavoritesFragmentSelf()
                                     view?.findNavController()?.navigate(action)
                                 }
                             }
@@ -117,6 +121,10 @@ class FavoritesFragment : Fragment() {
                     }
                 })
             }
+
+            override fun onItemClick(user: User) {
+                viewModel.onUserClicked(user)
+            }
         })
         with(binding.rvFavorites) {
             this.adapter = favAdapter
@@ -125,12 +133,12 @@ class FavoritesFragment : Fragment() {
         }
     }
 
-    fun cursorMapping(it: Cursor?): ArrayList<Favorites> {
-        val list = ArrayList<Favorites>()
+    fun cursorMapping(it: Cursor?): ArrayList<User> {
+        val list = ArrayList<User>()
         while (it?.moveToNext() == true) {
             it?.apply {
                 list.add(
-                    Favorites(
+                    User(
                         getString(getColumnIndexOrThrow(Favorites.USERNAME)),
                         getString(getColumnIndexOrThrow(Favorites.AVATAR_URL)),
                         getString(getColumnIndexOrThrow(Favorites.NAME))
@@ -138,30 +146,41 @@ class FavoritesFragment : Fragment() {
                 )
             }
         }
+        Log.d("Mapping", "cursorMapping: SIZE ${list.size}")
         it?.close()
         return list
     }
 
     fun observerSetup() {
-        activity?.applicationContext?.let { viewModel.setFavoriteList(it).observe(viewLifecycleOwner, {
-            it?.let { resource ->
-                when (resource.status) {
-                    Status.SUCCESS -> {
-                        resource.data.let {
-                            viewModel.getFavorites().observe(viewLifecycleOwner, { cursor ->
-                                val list = cursorMapping(cursor)
+        lateinit var list: ArrayList<User>
+        activity?.applicationContext?.let {
+            viewModel.setFavoriteList(it).observe(viewLifecycleOwner, {
+                it?.let { resource ->
+                    when (resource.status) {
+                        Status.SUCCESS -> {
+                            resource.data.let {
+                                list = cursorMapping(it)
                                 favAdapter.setFavList(list)
                                 favAdapter.notifyDataSetChanged()
-                                Log.i("ContentResolver", "Data retrieved successfully")
-                            })
+                                Log.w("Favorite", "Cursor retrieved: ${cursorMapping(it).size}")
+                            }
+                        }
+                        Status.ERROR -> {
+                            Log.w("Favorite", "Error retrieving favorites: ${resource.message}")
                         }
                     }
-                    Status.ERROR -> {
-                        Log.w("Favorite", "Error retrieving favorites: ${resource.message}")
-                    }
                 }
+            })
+        }
+        viewModel.navigatetoDetail().observe(viewLifecycleOwner, { user ->
+            if (user != null) {
+                val action: NavDirections =
+                    FavoritesFragmentDirections.actionFavoritesFragmentToDetailFragment(user)
+                Navigation.findNavController(requireView()).navigate(action)
+                viewModel.onUserMainDetailNavigated()
             }
-        }) }
+
+        })
     }
 
     companion object {

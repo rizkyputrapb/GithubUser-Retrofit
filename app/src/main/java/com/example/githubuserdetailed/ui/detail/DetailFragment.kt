@@ -151,6 +151,7 @@ class DetailFragment : Fragment() {
                 }
             }
         })
+        
 
     }
 }
